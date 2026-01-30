@@ -1,36 +1,42 @@
 #include "led_control.h"
 
-// 呼吸灯亮度变量（0 ~ 255）
 static int brightness = 0;
-
-// 亮度变化方向：1 表示变亮，-1 表示变暗
 static int direction = 1;
+
+// 当前“呼吸速度”，数值越大，变化越快
+static int breath_speed = 1;
 
 void led_init(void)
 {
-    // 这里将来放：GPIO / PWM 初始化
-    // 现在先留空，确保结构正确
+    // 预留硬件初始化
 }
 
 void led_purple_breathing(void)
 {
-    // 改变亮度
-    brightness += direction;
+    // 在中间亮度时加快变化（模拟肌肉发力）
+    if (brightness > 50 && brightness < 200)
+    {
+        breath_speed = 3;
+    }
+    else
+    {
+        breath_speed = 1;
+    }
 
-    // 到达最亮或最暗时，反转方向
+    // 根据方向改变亮度
+    brightness += direction * breath_speed;
+
+    // 亮度上限
     if (brightness >= 255)
     {
         brightness = 255;
-        direction = -1;
+        direction = -1;   // 开始“呼气”
     }
+    // 亮度下限
     else if (brightness <= 0)
     {
         brightness = 0;
-        direction = 1;
+        direction = 1;    // 开始“吸气”
     }
-
-    // 这里将来会把 brightness
-    // 映射到 RGB 的紫色通道
-    // 现在先当“逻辑正确”
 }
 
